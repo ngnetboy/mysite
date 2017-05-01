@@ -1,0 +1,12 @@
+{% extends "blog/base.html" %}
+
+{% block title %} {{ post.title }} {% endblock %}
+
+{% block content %}
+    <h1>{{ post.title }}</h1>
+    <p class="date">
+        Published {{ post.publish }} by {{ post.author }}
+    </p>
+    <!--linebreaks 将 post.body 中的 '\n' 代替为 <br/> 并使用 </p> 包围起来-->
+    {{ post.body|linebreaks }}
+{% endblock %}
