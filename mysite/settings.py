@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for mysite project.
 
@@ -14,6 +15,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -97,7 +99,19 @@ USE_L10N = True
 
 USE_TZ = True
 
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'ngnetboy@163.com'
+#EMAIL_HOST_PASSWORD = 'wangyi'
+EMAIL_HOST_PASSWORD = 'nanyang2010'
+EMAIL_SUBJECT_PREFIX = u'[xxmcf]'
+EMAIL_USE_TLS = True
 
+# FILE_CHARSET = 'utf-8'
+# DEFAULT_CHARSET = 'utf-8'
+import sys
+reload(sys)
+sys.setdefaultencoding("utf8")  #设置默认编码为utf8
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 

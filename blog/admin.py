@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from models import Post
+from models import Post, Comment
 from itertools import chain
 # Register your models here.
 
@@ -13,5 +13,11 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = 'publish'              #可以快速的在post上方使用日期过滤
     ordering = ['status', 'publish']        #可以指定列表的默认排序
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'post', 'created', 'active')
+    list_filter = ('active', 'created', 'updated')
+    search_fields = ('name', 'email', 'body')
+
 
 admin.site.register(Post, PostAdmin)
+admin.site.register(Comment, CommentAdmin)

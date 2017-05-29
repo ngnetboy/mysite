@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.utils.encoding import python_2_unicode_compatible
+#from django.utils.encoding import python_2_unicode_compatible
 # Create your models here.
 
 # class PublishedManager(models.Manager):
@@ -14,7 +14,7 @@ from django.utils.encoding import python_2_unicode_compatible
 #     def get_queryset(self):
 #         return super(DraftedManager, self).get_queryset().filter(status='draft')
 
-@python_2_unicode_compatible  #为了解决中文无法添加的问题
+#@python_2_unicode_compatible  #为了解决中文无法添加的问题  在settings中设置
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
@@ -43,4 +43,18 @@ class Post(models.Model):
         ordering = ('-publish',)
     def __str__(self):
         return self.title
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name="comments") #可以使用post.comments来访问comment中的内容
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+    def __str__(self):
+        return 'Comment by {} on {}'.format(self.name, self.post)
 
