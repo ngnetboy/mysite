@@ -5,6 +5,8 @@ from models import Post, Comment
 from forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
+from taggit.models import Tag
+from django.db.models import Count
 
 # import sys
 # reload(sys)
@@ -12,9 +14,16 @@ from django.http import HttpResponseRedirect
 
 # Create your views here.
 
-def post_list(request):
+def post_list(request, tag_slug=None):
     #posts = Post.published.all()
     object_list = Post.objects.filter(status='published')
+
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        object_list = object_list.filter(tags__in=[tag])  #tags__in 需要注意
+
+
     paginator = Paginator(object_list, 3)       #分页
     page = request.GET.get('page')
     try:
@@ -23,7 +32,8 @@ def post_list(request):
         posts = paginator.page(1)  # 如果page不是一个整数，则返回第一页
     except EmptyPage:
         posts = paginator.page(paginator.num_pages) #如果page不在范围之内，则返回最后一个 page
-    return render(request, 'blog/post/list.html', {'page':page, 'posts':posts})
+    return render(request, 'blog/post/list.html',
+                  {'page':page, 'posts':posts, 'tag':tag})
 
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(Post, slug=post,
@@ -49,11 +59,17 @@ def post_detail(request, year, month, day, post):
     else:
         comment_form = CommentForm()
 
+    post_tags_ids = post.tags.values_list('id', flat=True)
+    similar_posts = Post.objects.filter(status='published').filter(tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags', '-publish')[:4]
+    #print 'similar_posts', similar_posts
+
     return render(request, 'blog/post/detail.html',
                   {'post':post,
                    'comments': comments,
                    'comment_form':comment_form,
-                   'new_comment':comments_flag})
+                   'new_comment':comments_flag,
+                   'similar_posts':similar_posts})
 
 def post_share(request, post_id):
     post = get_object_or_404(Post, id=post_id, status='published')
