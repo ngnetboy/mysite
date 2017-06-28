@@ -1,5 +1,5 @@
 {% extends "blog/base.html" %}
-
+{% load blog_tags %}
 {% block title %} {{ post.title }} {% endblock %}
 
 {% block content %}
@@ -8,7 +8,8 @@
         Published {{ post.publish }} by {{ post.author }}
     </p>
     <!--linebreaks 将 post.body 中的 '\n' 代替为 <br/> 并使用 </p> 包围起来-->
-    {{ post.body|linebreaks }}
+    <!--{{ post.body|linebreaks }}-->
+    {{ post.body | markdown }}
     <p>
         <!--{ url }动态地生成url，根据 blog:post_share name为post_share的url规则 -->
         <a href='{% url "blog:post_share" post.id %}'>
